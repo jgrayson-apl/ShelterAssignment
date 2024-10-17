@@ -1,0 +1,83 @@
+
+  /**
+   * Address: {ens_s_address},  {ens_s_city}, {ens_s_state}
+   *
+   * This {ENS_S_Shelter_Type} shelter is currently {ens_s_shelter_status}, and has a capacity of {ENS_S_Capacity} people.
+   */
+
+  /**
+   * if (Lower($feature.petfriendly) == "yes") {
+   *     return "This shelter is pet friendly and can hold up to " + $feature.ens_s_pet_capacity + " pets.";
+   * } else {
+   *     return "This shelter DOES NOT accept pets";
+   * }
+   */
+
+
+ /**
+   * var pid = "7686c061cc1946ba9ed209ef30356d39";
+   * var server_url = "https://geoxc.bd.esri.com/portal/";
+   * var kg = KnowledgeGraphByPortalItem(Portal(server_url), pid);
+   *
+   * var results = querygraph(kg, "MATCH (s:Shelter {ENS_S_ShelterID: $ShelterID})-[:RequiresRole]->(role:Role)-[:RequiresSkill]->(skill:Skill) WHERE NOT (role)<-[:AssignedTo]-(:Employee) RETURN role.RoleType, collect(skill.Name)", {ShelterID: $feature.ens_s_shelterid});
+   *
+   * var final_str = "";
+   * if (count(results) == 0) {
+   *     final_str = "<span style='color: green;'><b>All Assignments are Filled - READY FOR SERVICE</b></span>";
+   * } else {
+   *     final_str = "<ul>";  // Start the bulleted list
+   *     for (var r in results) {
+   *         // Extract the role type
+   *         var roleType = results[r][0];
+   *
+   *         // Extract the skills list and format it as a comma-separated string
+   *         var skills = results[r][1];
+   *         var skills_str = "";
+   *         for (var i in skills) {
+   *             if (i > 0) {
+   *                 skills_str += ", ";
+   *             }
+   *             skills_str += skills[i];
+   *         }
+   *
+   *         // Construct the final string for each role and its required skills
+   *         final_str += "<li>" + roleType + ": " + skills_str + "</li>";
+   *     }
+   *     final_str += "</ul>";  // End the bulleted list
+   * }
+   *
+   * return {
+   *     type: 'text',
+   *     text: final_str
+   * };
+   */
+
+
+
+  /**
+   * var pid = "7686c061cc1946ba9ed209ef30356d39";
+   * var server_url = "https://geoxc.bd.esri.com/portal/";
+   * var kg = KnowledgeGraphByPortalItem(Portal(server_url), pid);
+   *
+   * var results = querygraph(kg, "MATCH (s:Shelter {ENS_S_ShelterID: $ShelterID})-[:RequiresRole]->(role:Role)-[:RequiresSkill]->(skill:Skill) WHERE NOT (role)<-[:AssignedTo]-(:Employee) WITH s, role, COLLECT(DISTINCT skill.Name) AS ReqSkills MATCH (e:Employee)-[:HasSkill]->(skill2:Skill)<-[:RequiresSkill]-(role2:Role) MATCH (e)-[:HasCondition]->(c:Condition)<-[:RequiresCondition]-(s2) WHERE (e:Employee)-[:AssignedTo]->(:Role)<-[:RequiresRole]-(:Shelter {ENS_S_Shelter_Status: 'CLOSED'})-[:Nearby]-(:Shelter) AND id(role)=id(role2) AND id(s)=id(s2) WITH s, e, c, ReqSkills, COLLECT(DISTINCT skill2.Name) AS empSkills, esri.graph.ST_GeoDistance(e.shape, s.shape) * 0.000621371 AS distance_in_miles WHERE all(reqSkill IN ReqSkills WHERE reqSkill IN empSkills) RETURN e.EmployeeName, empSkills, c.Allergy AS Condition, toString(round(distance_in_miles * 100) / 100.0) AS MilesFromShelter ORDER BY MilesFromShelter", {ShelterID: $feature.ens_s_shelterid});
+   *
+   * var final_str = "<ul>";  // Start the bulleted list
+   * for (var r in results) {
+   *     // Extract the skills list and format it as a comma-separated string
+   *     var skills = results[r][1];
+   *     var skills_str = "";
+   *     for (var i in skills) {
+   *         if (i > 0) {
+   *             skills_str += ", ";
+   *         }
+   *         skills_str += skills[i];
+   *     }
+   *     final_str += "<li><b>EmployeeID: " + results[r][0] + "</b>: Phone (305-111-11xx). Matches skills: <b>" + skills_str + ", " + results[r][2] + "</b>, and lives <b>" + results[r][3] + "</b> miles from shelter</li>";
+   * }
+   * final_str += "</ul>";  // End the bulleted list
+   *
+   * return {
+   *     type: 'text',
+   *     text: final_str
+   * };
+   */

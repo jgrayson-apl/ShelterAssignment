@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0 maximum-scale=1.0"/>
+    <!-- ICON -->
+    <link rel="icon" href="./assets/favicon.ico" sizes="32x32" type="image/vnd.microsoft.icon">
+    <!-- TITLE -->
+    <title class="application-title"></title>
+    <!-- META -->
+    <!--<meta property="og:title" content="">-->
+    <!--<meta property="og:description" content="">-->
+    <!--<meta property="og:url" content="https://geoxc-apps.bd.esri.com/.../index.html">-->
+    <!--<meta property="og:image" content="https://geoxc-apps.bd.esri.com/.../assets/app.png">-->
+    
+    <!-- CHARTJS -- https://www.chartjs.org/ -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>-->
+    
+    <!-- CALCITE -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/2.10.1/calcite.esm.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.10.1/calcite.css"/>
+    
+    <!-- ArcGIS API for JavaScript-->
+    <link href="https://js.arcgis.com/4.30/@arcgis/core/assets/esri/themes/dark/main.css" rel="stylesheet"/>
+    <script src="https://js.arcgis.com/4.30/"></script>
+    <!-- Load the Charts Components -->
+    <!--<script type="module" src="https://js.arcgis.com/charts-components/4.29/arcgis-charts-components.esm.js"></script>-->
+    
+    <!-- APPLICATION -->
+    <link rel="stylesheet" type="text/css" href="./css/application.css">
+    <script type="module" src="./js/Application.js"></script>
+  </head>
+  <body class="calcite-mode-dark">
+    <calcite-shell content-behind>
+      
+      <!-- HEADER -->
+      <calcite-navigation slot="header">
+        <!-- TITLE AND SNIPPET -->
+        <calcite-navigation-logo slot="logo" thumbnail="./assets/miami-dade-county-logo-white.png" iconx="snow-thunder" heading="Application Title" description="application description"></calcite-navigation-logo>
+        <!-- SHARE AND INFO ACTIONS -->
+        <!--<calcite-action slot="content-end" id="app-share-action" appearance="transparent" scale="m" title="share current options..." text="share current options" icon="link"></calcite-action>-->
+        <calcite-action slot="content-end" id="app-details-action" appearance="transparent" scale="m" title="app details..." text="app details" icon="information"></calcite-action>
+        <!-- SIGN IN-->
+        <div id="sign-in-container" slot="user"></div>
+      </calcite-navigation>
+      
+      <!-- LEFT -->
+      <calcite-shell-panel slot="panel-start" position="start" width-scale="m" collapsed>
+        <calcite-action-bar id="side-panel-action-bar" slot="action-bar">
+          <calcite-action text="Layers" title="map" icon="map" class="toggle-action" data-toggle="map"></calcite-action>
+        </calcite-action-bar>
+        
+        <!--<calcite-panel headingX="Places" class="toggle-panel" data-toggle="places">
+          <div id="bookmarks-container"></div>
+        </calcite-panel>-->
+        
+        <calcite-panel heading="Map" class="toggle-panel" data-toggle="map">
+          <calcite-button id="map-action" target="_blank" slot="header-actions-end" appearance="transparent" icon-end="launch" title="view map item..."></calcite-button>
+          <calcite-block heading="Layers" collapsible open>
+            <calcite-icon slot="icon" icon="layers"></calcite-icon>
+            <div id="layers-container"></div>
+          </calcite-block>
+          <calcite-block heading="Legend" collapsible open>
+            <calcite-icon slot="icon" icon="legend"></calcite-icon>
+            <div id="legend-container"></div>
+          </calcite-block>
+        </calcite-panel>
+      
+      </calcite-shell-panel>
+      
+      <!-- CENTER -->
+      <calcite-panel id="center-container">
+        <div id="view-container"></div>
+      </calcite-panel>
+      
+      <!-- RIGHT -->
+      <calcite-shell-panel slot="panel-end" position="end" width-scale="m" display-mode="float" collapsed>
+        <calcite-action-bar slot="action-bar">
+          <calcite-action text="Assignments" icon="map-pin" class="toggle-action" data-toggle="analysis"></calcite-action>
+        </calcite-action-bar>
+        
+        <calcite-panel heading="Shelter Staff Assignment" class="toggle-panel" data-toggle="analysis">
+          <div style="padding:0 8px;">
+            
+            <calcite-block heading="Hurricane Shelter" description="select shelter in the map"  icon-start="locator" open>
+              <div id="shelter-info"></div>
+            </calcite-block>
+            
+            <calcite-block heading="Missing Assignments" description="roles and required skills" icon-start="face-id" open>
+              <calcite-progress id="skills-progress" text="finding missing roles at this shelter..." type="indeterminate" hidden></calcite-progress>
+              <calcite-list id="skills-list" selection-mode="none"></calcite-list>
+              <calcite-notice id="skills-notice" kind="success" icon="check" width="full">
+                <div slot="message">All Assignments are Filled<br>READY FOR SERVICE</div>
+              </calcite-notice>
+            </calcite-block>
+            
+            <calcite-block heading="Potential Backup Managers" description="assign candidate to this shelter" icon-start="personal-homepage" open>
+              <calcite-progress id="candidates-progress" text="finding top 5 candidates with the required sills..." type="indeterminate" hidden></calcite-progress>
+              <calcite-list id="candidates-list" selection-mode="none"></calcite-list>
+              <calcite-notice id="candidates-notice" kind="success" icon="check" width="full">
+                <div slot="message">No current need for potential candidates.</div>
+              </calcite-notice>
+            </calcite-block>
+          
+          </div>
+        </calcite-panel>
+      
+      </calcite-shell-panel>
+      
+      <!-- SHAREABLE ALERT -->
+      <calcite-alert id="app-share-alert" slot="alerts" kind="success" icon="launch" placement="bottom" auto-close auto-close-duration="medium">
+        <div slot="message">Shareable link has been copied to the clipboard.</div>
+        <calcite-link slot="link" href="#" target="_blank" role="link" title="open in new tab">open in new tab</calcite-link>
+      </calcite-alert>
+      
+      <!-- NOTICES ADN ALERTS -->
+      <calcite-alert id="app-notice" slot="alerts" kind="danger" placement="bottom" width="auto">
+        <div slot="title"></div>
+        <div slot="message"></div>
+      </calcite-alert>
+      
+      <calcite-alert id="assign-alert" slot="alerts" kind="success" placement="top" width="auto" scale="l">
+        <div slot="title">Employee Role Assignment</div>
+        <div slot="message">
+          Employee <span id="assign-alert-emp-id" style="font-weight:600;"></span> has been assigned a role of <span id="assign-alert-role-type" style="font-weight:600;"></span>.
+        </div>
+      </calcite-alert>
+      
+      <!-- APP DETAILS MODAL -->
+      <calcite-modal id="app-details-modal" slot="modals" kind="brand" scale="m" width="m" aria-labelledby="app-modal-title">
+        <h3 slot="header" id="app-modal-title" class="application-title"></h3>
+        <div slot="content" class="application-description"></div>
+        <div slot="secondary">
+          <calcite-label layout="inline">
+            <span>hide on startup</span>
+            <calcite-checkbox id="hide-startup-checkbox"></calcite-checkbox>
+          </calcite-label>
+        </div>
+        <calcite-button id="app-details-ok-btn" slot="primary" width="full" hidden>OK</calcite-button>
+      </calcite-modal>
+    
+    </calcite-shell>
+    
+    <!-- LOADER -->
+    <calcite-loader id="app-loader" type="indeterminate" scale="l" text="...loading..."></calcite-loader>
+  
+  </body>
+</html>

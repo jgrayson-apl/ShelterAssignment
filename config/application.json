@@ -1,0 +1,17 @@
+{
+  "title": "",
+  "snippet": "",
+  "description": "",
+  "portalUrl": "https://geoxc.bd.esri.com/portal",
+  "oauthappid": "kZhAQw6NgMTdIwiP",
+  "authMode": "auto",
+  "apiKey": null,
+  "group": "",
+  "webmap": "0d4bc72c95bb4ec5a02c873a33245af9",
+  "webscene": "",
+  "viewProps": {
+    "alphaCompositingEnabled": true
+  },
+  "container": "view-container",
+  "shareable": []
+}
